@@ -50,6 +50,7 @@ import { ref, onMounted } from 'vue'
 import { getArticles } from '@/api/articles'
 import { getTags } from '@/api/tags'
 import { getComments } from '@/api/comments'
+import { getUsers } from '@/api/users'
 import dayjs from 'dayjs'
 
 const loading = ref(false)
@@ -68,15 +69,17 @@ onMounted(async () => {
 async function loadData() {
   loading.value = true
   try {
-    const [articlesData, tagsData, commentsData] = await Promise.all([
+    const [articlesData, tagsData, commentsData, usersData] = await Promise.all([
       getArticles({ page: 1, page_size: 5, is_published: true }),
       getTags(),
-      getComments({ page: 1, page_size: 1 })
+      getComments({ page: 1, page_size: 1 }),
+      getUsers({ page: 1, page_size: 1 })
     ])
     recentArticles.value = articlesData.items
     stats.value.articles = articlesData.total
     stats.value.tags = tagsData.length
     stats.value.comments = commentsData.total
+    stats.value.users = usersData.total
   } catch (error) {
     console.error('加载数据失败', error)
   } finally {

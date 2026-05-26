@@ -42,8 +42,11 @@ def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate) -> O
     return db_user
 
 
-def get_all_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]:
-    return db.query(models.User).offset(skip).limit(limit).all()
+def get_all_users(db: Session, skip: int = 0, limit: int = 100) -> tuple[List[models.User], int]:
+    query = db.query(models.User)
+    total = query.count()
+    users = query.order_by(models.User.created_at.desc()).offset(skip).limit(limit).all()
+    return users, total
 
 
 def create_tag(db: Session, tag: schemas.TagCreate) -> models.Tag:

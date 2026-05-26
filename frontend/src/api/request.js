@@ -50,7 +50,7 @@ api.interceptors.response.use(
       } else if (status === 403) {
         ElMessage.error('没有权限执行此操作')
       } else if (status === 404) {
-        ElMessage.error('资源不存在')
+        ElMessage.error(message || '资源不存在')
       } else if (status === 422) {
         ElMessage.error('请求参数错误')
       } else {

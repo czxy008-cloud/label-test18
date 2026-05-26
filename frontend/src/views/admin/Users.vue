@@ -47,7 +47,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { getAllUsers } from '@/api/users'
 import { useAuthStore } from '@/stores/auth'
 import dayjs from 'dayjs'
 
@@ -62,12 +62,8 @@ onMounted(() => {
 async function fetchUsers() {
   loading.value = true
   try {
-    const response = await axios.get('/api/users', {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
-    users.value = response.data
+    const response = await getAllUsers()
+    users.value = response.items
   } catch (error) {
     console.error('获取用户列表失败', error)
   } finally {

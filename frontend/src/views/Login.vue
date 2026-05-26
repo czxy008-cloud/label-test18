@@ -23,6 +23,12 @@
           />
         </el-form-item>
         <el-form-item>
+          <div class="login-options">
+            <el-checkbox v-model="form.rememberMe">记住密码</el-checkbox>
+            <el-link type="primary" @click="$router.push('/forgot-password')">忘记密码？</el-link>
+          </div>
+        </el-form-item>
+        <el-form-item>
           <el-button
           type="primary"
           size="large"
@@ -43,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
@@ -57,7 +63,14 @@ const formRef = ref(null)
 const loading = ref(false)
 const form = ref({
   username: '',
-  password: ''
+  password: '',
+  rememberMe: false
+})
+
+onMounted(() => {
+  if (authStore.rememberMe) {
+    form.value.rememberMe = true
+  }
 })
 
 const rules = {
@@ -80,7 +93,7 @@ async function handleLogin() {
   
   loading.value = true
   try {
-    await authStore.login(form.value.username, form.value.password)
+    await authStore.login(form.value.username, form.value.password, form.value.rememberMe)
     ElMessage.success('登录成功')
     const redirect = route.query.redirect || '/'
     router.push(redirect)
@@ -113,6 +126,13 @@ async function handleLogin() {
   text-align: center;
   margin-bottom: 32px;
   color: #303133;
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .login-footer {

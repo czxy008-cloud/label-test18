@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS article_tags CASCADE;
 DROP TABLE IF EXISTS articles CASCADE;
 DROP TABLE IF EXISTS tags CASCADE;
+DROP TABLE IF EXISTS password_reset_codes CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
 -- ============================================================================
@@ -114,6 +115,22 @@ CREATE INDEX idx_comments_user_id ON comments(user_id);
 CREATE INDEX idx_comments_parent_id ON comments(parent_id);
 CREATE INDEX idx_comments_is_approved ON comments(is_approved);
 CREATE INDEX idx_comments_created_at ON comments(created_at);
+
+-- ============================================================================
+-- 6. 密码重置验证码表 (password_reset_codes)
+-- ============================================================================
+-- 存储密码重置验证码，支持服务重启和多实例部署场景
+-- ============================================================================
+CREATE TABLE password_reset_codes (
+    id              SERIAL          PRIMARY KEY,                    -- 主键ID，自增
+    email           VARCHAR(255)    NOT NULL,                       -- 邮箱地址
+    code            VARCHAR(6)      NOT NULL,                       -- 6位数字验证码
+    expires_at      TIMESTAMPTZ     NOT NULL,                       -- 过期时间
+    created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW()          -- 创建时间
+);
+
+-- 为邮箱查询添加索引
+CREATE INDEX idx_password_reset_codes_email ON password_reset_codes(email);
 
 -- ============================================================================
 -- 自动更新时间戳的触发器函数

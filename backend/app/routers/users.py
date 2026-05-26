@@ -22,14 +22,21 @@ def update_current_user(
     return crud.update_user(db, user_id=current_user.id, user_update=user_update)
 
 
-@router.get("", response_model=List[schemas.UserResponse])
+@router.get("", response_model=schemas.PaginatedUsers)
 def list_users(
-    skip: int = 0,
-    limit: int = 100,
+    page: int = 1,
+    page_size: int = 100,
     current_user: models.User = Depends(get_current_admin_user),
     db: Session = Depends(get_db)
 ):
-    return crud.get_all_users(db, skip=skip, limit=limit)
+    skip = (page - 1) * page_size
+    users, total = crud.get_all_users(db, skip=skip, limit=page_size)
+    return {
+        "items": users,
+        "total": total,
+        "page": page,
+        "page_size": page_size
+    }
 
 
 @router.get("/{user_id}", response_model=schemas.UserResponse)

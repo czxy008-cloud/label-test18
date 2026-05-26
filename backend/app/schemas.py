@@ -24,6 +24,17 @@ class UserCreate(UserBase):
 class UserLogin(BaseModel):
     username: str
     password: str
+    remember_me: bool = False
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    code: str
+    new_password: str = Field(..., min_length=6, max_length=100)
 
 
 class UserUpdate(BaseModel):
@@ -38,10 +49,18 @@ class UserResponse(BaseModel):
     avatar_url: Optional[str] = None
     bio: Optional[str] = None
     is_admin: bool
+    is_active: bool
     created_at: datetime
 
     class Config:
         from_attributes = True
+
+
+class PaginatedUsers(BaseModel):
+    items: List[UserResponse]
+    total: int
+    page: int
+    page_size: int
 
 
 class TagBase(BaseModel):

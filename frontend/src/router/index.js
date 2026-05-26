@@ -3,12 +3,6 @@ import { useAuthStore } from '@/stores/auth'
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: () => import('@/views/Home.vue'),
-    meta: { title: '首页' }
-  },
-  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),
@@ -21,28 +15,52 @@ const routes = [
     meta: { title: '注册', public: true }
   },
   {
-    path: '/articles',
-    name: 'ArticleList',
-    component: () => import('@/views/ArticleList.vue'),
-    meta: { title: '文章列表' }
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: () => import('@/views/ForgotPassword.vue'),
+    meta: { title: '忘记密码', public: true }
   },
   {
-    path: '/article/:id',
-    name: 'ArticleDetail',
-    component: () => import('@/views/ArticleDetail.vue'),
-    meta: { title: '文章详情' }
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: () => import('@/views/ResetPassword.vue'),
+    meta: { title: '重置密码', public: true }
   },
   {
-    path: '/editor',
-    name: 'ArticleEditor',
-    component: () => import('@/views/ArticleEditor.vue'),
-    meta: { title: '撰写文章', requiresAuth: true }
-  },
-  {
-    path: '/editor/:id',
-    name: 'ArticleEdit',
-    component: () => import('@/views/ArticleEditor.vue'),
-    meta: { title: '编辑文章', requiresAuth: true }
+    path: '/',
+    component: () => import('@/views/Home.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('@/views/HomeContent.vue'),
+        meta: { title: '首页' }
+      },
+      {
+        path: 'articles',
+        name: 'ArticleList',
+        component: () => import('@/views/ArticleList.vue'),
+        meta: { title: '文章列表' }
+      },
+      {
+        path: 'article/:id',
+        name: 'ArticleDetail',
+        component: () => import('@/views/ArticleDetail.vue'),
+        meta: { title: '文章详情' }
+      },
+      {
+        path: 'editor',
+        name: 'ArticleEditor',
+        component: () => import('@/views/ArticleEditor.vue'),
+        meta: { title: '撰写文章', requiresAuth: true }
+      },
+      {
+        path: 'editor/:id',
+        name: 'ArticleEdit',
+        component: () => import('@/views/ArticleEditor.vue'),
+        meta: { title: '编辑文章', requiresAuth: true }
+      }
+    ]
   },
   {
     path: '/admin',
@@ -110,7 +128,7 @@ router.beforeEach((to, from, next) => {
     return
   }
 
-  if ((to.name === 'Login' || to.name === 'Register') && authStore.isLoggedIn) {
+  if ((to.name === 'Login' || to.name === 'Register' || to.name === 'ForgotPassword' || to.name === 'ResetPassword') && authStore.isLoggedIn) {
     next({ name: 'Home' })
     return
   }
